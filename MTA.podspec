@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "MTA"
-  s.version      = "1.6.6"
+  s.version      = "2.0.1"
   s.summary      = "An unofficial MTA SDK Cocoapods repository."
   s.homepage     = "https://mta.qq.com"
   s.authors      = { 'HyanCat' => 'https://github.com/HyanCat' }
@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
     :text => "Copyright https://mta.qq.com"
   }
 
-  s.source       = { :http => 'http://mta.qq.com/mta/resource/download/sdk/mta-ios-stats-sdk-1.6.6.zip' }
+  s.source       = { :http => 'http://mta.qq.com/mta/resource/download/sdk/mta-ios-stats-sdk-2.0.1.zip' }
   s.platform     = :ios, "7.0"
 
   s.frameworks = "SystemConfiguration", "CoreTelephony"
