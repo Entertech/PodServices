@@ -18,6 +18,7 @@
 @import Security;
 @import CFNetwork;
 @import CoreLocation;
+@import Security;
 #endif
 
 typedef NS_ENUM(NSInteger, GrowingAspectMode)
@@ -31,6 +32,14 @@ typedef NS_ENUM(NSInteger, GrowingAspectMode)
     
     // 测试阶段 高兼容性 性能比GrowingAspectTypeSubClass略低 但是比RAC和Aspects快8-10倍左右
     GrowingAspectModeDynamicSwizzling   ,
+};
+
+typedef NS_ENUM(NSInteger, GrowingDeviceIDMode)
+{
+    GrowingDeviceIDModeIDFV             ,
+    GrowingDeviceIDModeIDFA             ,
+    GrowingDeviceIDModeRandomUUID       ,
+    GrowingDeviceIDModeCustom           ,
 };
 
 
@@ -60,17 +69,18 @@ typedef NS_ENUM(NSInteger, GrowingAspectMode)
 + (void)setEnableLog:(BOOL)enableLog;
 + (BOOL)getEnableLog;
 
-// 以下四个函数设置后会覆盖原有设置
+// 以下函数设置后会覆盖原有设置
 // 并且只会在第一次安装后调用 以保证同一设备的设备ID相同
 // 请在方法 startWithAccountId 之前调用
 // 默认使用IDFV，用法：[Growing setDeviceIDModeToIDFV];
-#define setDeviceIDModeToIDFV setDeviceIDModeToCustomBlock:^NSString*{ return [[[UIDevice currentDevice] identifierForVendor] UUIDString]; }
+#define setDeviceIDModeToIDFV setDeviceIDModeToCustomBlock:^NSString*{ return [[[UIDevice currentDevice] identifierForVendor] UUIDString]; } deviceIDMode:GrowingDeviceIDModeIDFV
 // 设置使用IDFA，用法：[Growing setDeviceIDModeToIDFA];
-#define setDeviceIDModeToIDFA setDeviceIDModeToCustomBlock:^NSString*{ return [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString]; }
+#define setDeviceIDModeToIDFA setDeviceIDModeToCustomBlock:^NSString*{ return [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString]; } deviceIDMode:GrowingDeviceIDModeIDFA
 // 使用随机UUID，用法：[Growing setDeviceIDModeToRandomUUID];
-#define setDeviceIDModeToRandomUUID setDeviceIDModeToCustomBlock:^NSString*{ return [[NSUUID UUID] UUIDString]; }
-// 使用自定义的ID自 定义ID长度不可大于36 否则会被抛弃 NSUUID的UUIDString长度为36
-+ (void)setDeviceIDModeToCustomBlock:(NSString*(^)())customBlock;
+#define setDeviceIDModeToRandomUUID setDeviceIDModeToCustomBlock:^NSString*{ return [[NSUUID UUID] UUIDString]; } deviceIDMode:GrowingDeviceIDModeRandomUUID
++ (void)setDeviceIDModeToCustomBlock:(NSString*(^)())customBlock __deprecated_msg("请用下面的 setDeviceIDModeToCustomBlock:deviceIDMode: 方法");
+// 使用自定义的ID 自定义ID长度不可大于36 否则会被抛弃 NSUUID的UUIDString长度为36 参数DeviceIDMode填写GrowingDeviceIDModeCustom
++ (void)setDeviceIDModeToCustomBlock:(NSString*(^)())customBlock deviceIDMode:(GrowingDeviceIDMode)deviceIDMode;
 
 
 // 使用预留字段
@@ -100,6 +110,8 @@ typedef NS_ENUM(NSInteger, GrowingAspectMode)
 + (void)disable;
 // 设置为 NO，可以不采集任何关于 UIWebView / WKWebView 的统计信息
 + (void)enableAllWebViews:(BOOL)enable;
+// 设置为 YES, 将启用 HashTag
++ (void)enableHybridHashTag:(BOOL)enable;
 // 是否开启了trackingWebView选项
 + (BOOL)isTrackingWebView;
 
@@ -120,6 +132,10 @@ typedef NS_ENUM(NSInteger, GrowingAspectMode)
 
 // 设置自定义的服务器地址
 + (void)setTrackerHost:(NSString *)host;
+
+// 设置zone信息
++ (void)setZone:(NSString *)zone;
+
 
 + (NSString *)getDeviceId;
 + (NSString *)getSessionId;

@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "GrowingIO"
-  s.version      = "0.9.47"
+  s.version      = "1.0.3"
   s.summary      = "An unofficial GrowingIO SDK Cocoapods repository."
   s.homepage     = "https://www.growingio.com/"
   s.authors      = { 'HyanCat' => 'https://github.com/HyanCat' }
